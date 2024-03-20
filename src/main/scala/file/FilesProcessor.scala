@@ -3,7 +3,7 @@ package file
 import media.MediaTypeChecker
 
 import java.nio.file.{FileAlreadyExistsException, FileSystems, Files, Path, StandardCopyOption}
-import scala.util.Random
+import scala.util.{Failure, Success, Try}
 
 case class FilesProcessor(sourceDirectory: Path, destinationDirectory: Path, errorDirectory: Path) {
 
@@ -15,21 +15,21 @@ case class FilesProcessor(sourceDirectory: Path, destinationDirectory: Path, err
 
   def processFile(filePath: Path): Unit = {
     val newFilePath = PathResolver.getNewDirectoriesForFile(filePath)
-    copyFile(filePath, destinationDirectory, newFilePath)
+    copyFile(filePath, destinationDirectory, newFilePath) match {
+      case Success(_) =>
+      case Failure(_: FileAlreadyExistsException) =>
+            val newFilename = PathResolver.generateUniqueFilename(filePath.getFileName)
+            val newErrorPath = errorDirectory.resolve(newFilePath.getParent).resolve(newFilename)
+            copyFile(filePath, errorDirectory, newErrorPath)
+      case Failure(e: Exception) =>
+        println(s"Error moving file $e")
+    }
   }
 
-  def copyFile(filePath: Path, root: Path, newFilePath: Path): Unit = {
-    try {
-      val destFilePath = root.resolve(newFilePath)
-      Files.createDirectories(destFilePath.getParent)
-      Files.copy(filePath, destFilePath, StandardCopyOption.COPY_ATTRIBUTES)
-    } catch {
-      case _: FileAlreadyExistsException =>
-        val newFilename = PathResolver.generateUniqueFilename(filePath.getFileName)
-        val newErrorPath = errorDirectory.resolve(newFilePath.getParent).resolve(newFilename)
-        copyFile(filePath, errorDirectory, newErrorPath)
-      case e: Exception => println(s"Error moving file: $e")
-    }
+  def copyFile(filePath: Path, root: Path, newFilePath: Path): Try[Unit] = Try{
+    val destFilePath = root.resolve(newFilePath)
+    Files.createDirectories(destFilePath.getParent)
+    Files.copy(filePath, destFilePath, StandardCopyOption.COPY_ATTRIBUTES)
   }
 
 

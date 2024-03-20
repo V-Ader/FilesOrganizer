@@ -22,11 +22,11 @@ object PathResolver {
   }
 
   def getFileExtension(filePath: Path): String = {
-    filePath.toString.toLowerCase.split("\\.").lastOption.get
+    filePath.toString.split("\\.").lastOption.get
   }
 
   def getFileName(filePath: Path): String = {
-    filePath.toString.toLowerCase.split("\\.").headOption.get
+    filePath.toString.split("\\.").headOption.get
   }
 
   def generateUniqueFilename(filename: Path): String = {
