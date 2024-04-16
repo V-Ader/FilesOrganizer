@@ -1,4 +1,4 @@
-package file.processor
+package result
 
 sealed trait ProcessingOutcome
 case object OutcomeSaved extends ProcessingOutcome

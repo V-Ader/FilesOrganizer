@@ -1,12 +1,12 @@
-package file.processor
+package processor
 
 import config.Config
-import file.ProcessedFile
 import media.MediaTypeChecker
+import result.{OutcomeError, ProcessingOutcome, ProcessingResult}
 
 import java.nio.file.{FileAlreadyExistsException, FileSystems, Files, Path}
 import scala.jdk.CollectionConverters.IteratorHasAsScala
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 class FilesProcessor(sourceDirectory: Path, fileProcessor: DefaultFileProcessor, errorFileProcessor: ErrorFileProcessor) {
 
@@ -26,7 +26,9 @@ class FilesProcessor(sourceDirectory: Path, fileProcessor: DefaultFileProcessor,
   private def processFile(processedFile: ProcessedFile): ProcessingOutcome = {
     fileProcessor.processFile(processedFile) match {
       case Success(value) => value
-      case Failure(FileAlreadyExistsException) => errorFileProcessor.processFile(processedFile).get
+      case Failure(_: FileAlreadyExistsException) => errorFileProcessor.processFile(processedFile).get
+      case Failure(exception) => println("Unexpected exception occurred for file: ", processedFile.currentPath,
+        "Exception:", exception); OutcomeError
     }
   }
 }

@@ -1,5 +1,5 @@
 import config.Config
-import file.processor.FilesProcessor
+import processor.FilesProcessor
 
 object Main {
 
@@ -15,6 +15,7 @@ object Main {
       errorPath = args(2))
 
     val filesProcessor = FilesProcessor.apply(config)
-    filesProcessor.processDirectory()
+    val results = filesProcessor.processDirectory()
+    printf("Successed: %d, Skipped: %d, Errors: %d", results.succeeded, results.skipped, results.errors)
   }
 }

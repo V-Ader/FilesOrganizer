@@ -1,14 +1,14 @@
-package file.processor
-import file.FileOperator.copy
-import file.{FileOperator, PathResolver, ProcessedFile}
+package processor
 
-import java.nio.file.{FileAlreadyExistsException, Path}
+import file.FileOperator
+import result.{OutcomeSaved, ProcessingOutcome}
+
+import java.nio.file.Path
 import scala.util.{Failure, Success, Try}
 
-class DefaultFileProcessor(val directory: Path) {
+class DefaultFileProcessor(val directory: Path) extends FileProcessor{
 
   def processFile(file: ProcessedFile): Try[ProcessingOutcome] = {
-    println(file.destinationPath)
     FileOperator.copy(file.currentPath, file.destinationPath) match {
       case Success(_) => Success(OutcomeSaved)
       case Failure(exception) => Failure(exception)

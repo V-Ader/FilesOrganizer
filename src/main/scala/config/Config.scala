@@ -8,6 +8,6 @@ object Config {
     getMediaTypes,sourcePath, destinationPath, errorPath)
 
   def getMediaTypes: Set[String] = {
-    Set("jpg", "jpeg")
+    Set("jpg", "jpeg", "mp4")
   }
 }

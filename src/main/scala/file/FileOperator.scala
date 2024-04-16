@@ -1,9 +1,9 @@
 package file
 
-import java.nio.file.{Files, Path, Paths, StandardCopyOption}
-import scala.util.Try
 import java.math.BigInteger
+import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 import java.security.MessageDigest
+import scala.util.Try
 
 
 object FileOperator {
