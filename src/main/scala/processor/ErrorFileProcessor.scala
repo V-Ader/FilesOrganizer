@@ -1,23 +1,23 @@
-package file.processor
+package processor
 
-import file.{FileOperator, ProcessedFile}
+import file.FileOperator
+import result.{OutcomeSaved, OutcomeSkipped, ProcessingOutcome}
 
 import java.nio.file.Path
 import scala.util.{Failure, Success, Try}
 
-class ErrorFileProcessor(val directory: Path)  {
+class ErrorFileProcessor(val directory: Path) extends FileProcessor {
 
-  def processFile(processedFile: ProcessedFile): Try[String] = {
-    if(! FileOperator.equals(
+  override def processFile(processedFile: ProcessedFile): Try[ProcessingOutcome] = {
+    if(!FileOperator.equals(
         processedFile.currentPath,
         processedFile.destinationPath)) {
-      println(processedFile.errorPath)
       FileOperator.copy(processedFile.currentPath, processedFile.errorPath) match {
-        case Success(_) => return Success("SAVED")
+        case Success(_) => return Success(OutcomeSaved)
         case Failure(exception) => return Failure(exception)
       }
     }
-    Success("SKIPPED")
+    Success(OutcomeSkipped)
   }
 }
 
